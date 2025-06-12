@@ -1,0 +1,354 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Sort Algorithm Visualization</title>
+    <link
+      rel="stylesheet"
+      href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"
+    />
+    <style>
+      body {
+        background-color: #f8f9fa;
+      }
+      canvas {
+        border: 1px solid black;
+      }
+      .container {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+      }
+      #sortCanvas {
+        margin-top: 20px;
+      }
+      button {
+        margin-top: 20px;
+      }
+      .algorithmName {
+        margin-top: 20px;
+        text-transform: capitalize;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <h1 class="mt-5">Sort Algorithm Visualization</h1>
+      <p id="algorithmName">{{algorithm}}</p>
+      <p id="algorithmComplexity">{{timeComplexity}}</p>
+      <p id="iterationCount"></p>
+      <canvas id="sortCanvas" width="800" height="400"></canvas>
+      <button class="btn btn-primary mt-3" onclick="startSorting()">
+        Start Sorting
+      </button>
+    </div>
+
+    <script>
+              let arr = [];
+              let canvas = document.getElementById('sortCanvas');
+              let ctx = canvas.getContext('2d');
+              let barWidth = 30;
+              let barMargin = 10;
+              let frameRate = 0.01;
+              let iterationCount = 0;
+
+              function drawArray() {
+                  ctx.clearRect(0, 0, canvas.width, canvas.height);
+                  ctx.font = '20px Arial';
+                  ctx.textAlign = 'center';
+                  for (let i = 0; i < arr.length; i++) {
+                      let barHeight = arr[i] * 3; // scale bar height for better visibility
+                      let x = i * (barWidth + barMargin) + barMargin;
+                      let y = canvas.height - barHeight;
+
+                      // Draw bar
+                      ctx.fillStyle = '#3498db';
+                      ctx.fillRect(x, y, barWidth, barHeight);
+
+                      // Draw number
+                      ctx.fillStyle = '#000';
+                      ctx.fillText(arr[i], x + barWidth / 2, y - 10);
+                  }
+              }
+
+              function sleep(ms) {
+                  return new Promise(resolve => setTimeout(resolve, ms));
+              }
+
+              function getTimeComplexity(algorithm) {
+                  switch (algorithm) {
+                      case 'Bubble Sort':
+                          return 'O(n^2)';
+                      case 'Insertion Sort':
+                          return 'O(n^2)';
+                      case 'Selection Sort':
+                          return 'O(n^2)';
+                      case 'Quick Sort':
+                          return 'O(n log n)';
+                      case 'Merge Sort':
+                          return 'O(n log n)';
+                      case 'Heap Sort':
+                          return 'O(n log n)';
+                      case 'Radix Sort':
+                          return 'O(nk)';
+                      // Add cases for other algorithms as needed
+                      default:
+                          return 'Unknown';
+                  }
+              }
+
+              async function bubbleSort() {
+                  let n = arr.length;
+                  iterationCount = 0;
+                  for (let i = 0; i < n - 1; i++) {
+                      for (let j = 0; j < n - i - 1; j++) {
+                          iterationCount++;
+                          if (arr[j] > arr[j + 1]) {
+                              let temp = arr[j];
+                              arr[j] = arr[j + 1];
+                              arr[j + 1] = temp;
+
+                              drawArray();
+                              document.getElementById("iterationCount").innerText = `Iterations: ${iterationCount}`;
+                              await sleep(frameRate);
+                          }
+                      }
+                  }
+              }
+
+              async function insertionSort() {
+                  let n = arr.length;
+                  iterationCount = 0;
+                  for (let i = 1; i < n; i++) {
+                      let key = arr[i];
+                      let j = i - 1;
+                      while (j >= 0 && arr[j] > key) {
+                          iterationCount++;
+                          arr[j + 1] = arr[j];
+                          j = j - 1;
+
+                          drawArray();
+                          document.getElementById("iterationCount").innerText = `Iterations: ${iterationCount}`;
+                          await sleep(frameRate);
+                      }
+                      arr[j + 1] = key;
+
+                      drawArray();
+                      document.getElementById("iterationCount").innerText = `Iterations: ${iterationCount}`;
+                      await sleep(frameRate);
+                  }
+              }
+
+              async function selectionSort() {
+                  let n = arr.length;
+                  iterationCount = 0;
+                  for (let i = 0; i < n - 1; i++) {
+                      let minIdx = i;
+                      for (let j = i + 1; j < n; j++) {
+                          iterationCount++;
+                          if (arr[j] < arr[minIdx]) {
+                              minIdx = j;
+                          }
+                      }
+                      if (minIdx !== i) {
+                          let temp = arr[minIdx];
+                          arr[minIdx] = arr[i];
+                          arr[i] = temp;
+
+                          drawArray();
+                          document.getElementById("iterationCount").innerText = `Iterations: ${iterationCount}`;
+                          await sleep(frameRate);
+                      }
+                  }
+              }
+
+              async function quickSort(start = 0, end = arr.length - 1) {
+                  iterationCount = 0;
+                  if (start >= end) return;
+
+                  let index = await partition(start, end);
+                  await quickSort(start, index - 1);
+                  await quickSort(index + 1, end);
+              }
+
+              async function partition(start, end) {
+                  let pivotIndex = start;
+                  let pivotValue = arr[end];
+                  for (let i = start; i < end; i++) {
+                      iterationCount++;
+                      if (arr[i] < pivotValue) {
+                          [arr[i], arr[pivotIndex]] = [arr[pivotIndex], arr[i]];
+                          pivotIndex++;
+                      }
+                  }
+                  [arr[pivotIndex], arr[end]] = [arr[end], arr[pivotIndex]];
+                  drawArray();
+                  document.getElementById("iterationCount").innerText = `Iterations: ${iterationCount}`;
+                  await sleep(frameRate);
+                  return pivotIndex;
+              }
+
+              async function mergeSort(start = 0, end = arr.length - 1) {
+                  iterationCount = 0;
+                  if (start >= end) return;
+                  let mid = Math.floor((start + end) / 2);
+                  await mergeSort(start, mid);
+                  await mergeSort(mid + 1, end);
+                  await merge(start, mid, end);
+              }
+
+              async function merge(start, mid, end) {
+                  let left = arr.slice(start, mid + 1);
+                  let right = arr.slice(mid + 1, end + 1);
+                  let i = 0, j = 0, k = start;
+                  while (i < left.length && j < right.length) {
+                      iterationCount++;
+                      if (left[i] <= right[j]) {
+                          arr[k++] = left[i++];
+                      } else {
+                          arr[k++] = right[j++];
+                      }
+                      drawArray();
+                      document.getElementById("iterationCount").innerText = `Iterations: ${iterationCount}`;
+                      await sleep(frameRate);
+                  }
+                  while (i < left.length) {
+                      arr[k++] = left[i++];
+                      drawArray();
+                      document.getElementById("iterationCount").innerText = `Iterations: ${iterationCount}`;
+                      await sleep(frameRate);
+                  }
+                  while (j < right.length) {
+                      arr[k++] = right[j++];
+                      drawArray();
+                      document.getElementById("iterationCount").innerText = `Iterations: ${iterationCount}`;
+                      await sleep(frameRate);
+                  }
+              }
+
+              async function heapSort() {
+                  let n = arr.length;
+                  iterationCount = 0;
+                  for (let i = Math.floor(n / 2) - 1; i >= 0; i--) {
+                      await heapify(n, i);
+                  }
+                  for (let i = n - 1; i > 0; i--) {
+                      [arr[0], arr[i]] = [arr[i], arr[0]];
+                      drawArray();
+                      document.getElementById("iterationCount").innerText = `Iterations: ${iterationCount}`;
+                      await sleep(frameRate);
+                      await heapify(i, 0);
+                  }
+              }
+
+              async function heapify(n, i) {
+                  let largest = i;
+                  let left = 2 * i + 1;
+                  let right = 2 * i + 2;
+
+                  if (left < n && arr[left] > arr[largest]) {
+                      largest = left;
+                  }
+                  if (right < n && arr[right] > arr[largest]) {
+                      largest = right;
+                  }
+                  if (largest !== i) {
+                      [arr[i], arr[largest]] = [arr[largest], arr[i]];
+                      drawArray();
+                      document.getElementById("iterationCount").innerText = `Iterations: ${iterationCount}`;
+                      await sleep(frameRate);
+                      await heapify(n, largest);
+                  }
+              }
+
+              async function radixSort() {
+                  let max = Math.max(...arr);
+                  let exp = 1;
+                  iterationCount = 0;
+                  while (Math.floor(max / exp) > 0) {
+                      await countingSortByDigit(exp);
+                      exp *= 10;
+                  }
+              }
+
+              async function countingSortByDigit(exp) {
+                  let output = new Array(arr.length).fill(0);
+                  let count = new Array(10).fill(0);
+
+                  for (let i = 0; i < arr.length; i++) {
+                      iterationCount++;
+                      let digit = Math.floor(arr[i] / exp) % 10;
+                      count[digit]++;
+                  }
+                  for (let i = 1; i < 10; i++) {
+                      count[i] += count[i - 1];
+                  }
+                  for (let i = arr.length - 1; i >= 0; i--) {
+                      let digit = Math.floor(arr[i] / exp) % 10;
+                      output[count[digit] - 1] = arr[i];
+                      count[digit]--;
+                  }
+                  for (let i = 0; i < arr.length; i++) {
+                      arr[i] = output[i];
+                      drawArray();
+                      document.getElementById("iterationCount").innerText = `Iterations: ${iterationCount}`;
+                      await sleep(frameRate);
+                  }
+              }
+
+              async function bogoSort() {
+          iterationCount = 0;
+
+          function isSorted() {
+              for (let i = 1; i < arr.length; i++) {
+                  if (arr[i - 1] > arr[i]) {
+                      return false;
+                  }
+              }
+              return true;
+          }
+
+          function shuffle() {
+              for (let i = arr.length - 1; i > 0; i--) {
+                  let j = Math.floor(Math.random() * (i + 1));
+                  [arr[i], arr[j]] = [arr[j], arr[i]];
+              }
+          }
+
+          while (!isSorted()) {
+              shuffle();
+              iterationCount++;
+              drawArray();
+              document.getElementById("iterationCount").innerText = `Iterations: ${iterationCount}`;
+              await sleep(frameRate);
+          }
+      }
+
+
+              function startSorting() {
+                  arr = Array.from({ length: 20 }, () => Math.floor(Math.random() * 100) + 1);
+                  drawArray();
+                  {% if algorithm == 'bubbleSort' %}
+                      bubbleSort();
+                  {% elif algorithm == 'insertionSort' %}
+                      insertionSort();
+                  {% elif algorithm == 'selectionSort' %}
+                      selectionSort();
+                  {% elif algorithm == 'quickSort' %}
+                      quickSort();
+                  {% elif algorithm == 'mergeSort' %}
+                      mergeSort();
+                  {% elif algorithm == 'heapSort' %}
+                      heapSort();
+                  {% elif algorithm == 'radixSort' %}
+                      radixSort();
+                  {% elif algorithm == 'bogoSort' %}
+                      bogoSort();
+                  {% endif %}
+
+              }
+    </script>
+  </body>
+</html>

@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Select Sorting Algorithm</title>
+    <link
+      rel="stylesheet"
+      href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"
+    />
+    <style>
+      body {
+        background-color: #f8f9fa;
+      }
+        .container {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            margin-top: 50px;
+        }
+        .mt-5 {
+            margin-top: 3rem !important;
+            text-align: center;
+        }
+        form {
+            height: 400px;
+            width: 400px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            border: solid 1px #ccc;
+            margin-top: 20px;
+        }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <h1 class="mt-5">Select Sorting Algorithm</h1>
+      <form method="POST">
+        <div class="form-group">
+          <label for="algorithm">Choose Sorting Algorithm:</label>
+          <select name="algorithm" id="algorithm" class="form-control">
+            <option value="bubbleSort">Bubble Sort O(n^2)</option>
+            <option value="insertionSort">Insertion Sort O(n^2)</option>
+            <option value="selectionSort">Selection Sort O(n^2)</option>
+            <option value="quickSort">Quick Sort O(n^2)</option>
+            <option value="mergeSort">Merge Sort O(n logn)</option>
+            <option value="heapSort">Heap Sort O(n logn)</option>
+            <option value="radixSort">Radix Sort O(nk)</option>
+            <option value="bogoSort">Bogo Sort O(infinite)</option>
+            <option value="bucketSort">Bucket Sort O(n^2)</option>
+            <option value="shellSort">Shell Sort O(n^2)</option>
+          </select>
+        </div>
+        <button type="submit" class="btn btn-primary">Select Algorithm</button>
+      </form>
+    </div>
+  </body>
+</html>
